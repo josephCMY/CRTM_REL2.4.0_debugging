@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Clean up old compilation
+rm *.mod *.o *.exe
+
+# Directory with CRTM stuff
+CRTM_DIR=~/diy_compilers_and_libraries/crtm_v2.4.0
+
+# Compilation flags
+FC=ftn
+FCFLAGS="-fallow-argument-mismatch -fallow-invalid-boz -fconvert=little-endian -w -g -O0 -fbacktrace"
+
+
+# Compile
+
+#$FC $FCFLAGS -o crtm.exe module_netcdf.f module_utils.f90 main_crtm.f90
+
+# Compile
+$FC $FCFLAGS -c -I$NETCDF/include module_netcdf.f 
+$FC $FCFLAGS -c -L$CRTM_DIR/lib -lcrtm -I$CRTM_DIR/include module_utils.f90
+$FC $FCFLAGS -c -I$NETCDF/include -I$CRTM_DIR/include main_crtm.f90
+$FC $FCFLAGS -o crtm.exe module_utils.o module_netcdf.o main_crtm.o -L$CRTM_DIR/lib -lcrtm -L$NETCDF/lib -lnetcdff -I$CRTM_DIR/include  -fopenmp
